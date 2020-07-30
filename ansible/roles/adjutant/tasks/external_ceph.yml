@@ -1,0 +1,35 @@
+---
+- name: Copy over ceph.conf file
+  template:
+    src: "{{ node_custom_config }}/adjutant/ceph.conf"
+    dest: "{{ node_config_directory }}/{{ item }}/ceph.conf"
+    mode: "0660"
+  become: true
+  when: inventory_hostname in groups[item]
+  with_items:
+    - "adjutant-api"
+  notify:
+    - Restart {{ item }} container
+
+- name: Copy over ceph adjutant keyring
+  copy:
+    src: "{{ node_custom_config }}/adjutant/{{ ceph_adjutant_keyring }}"
+    dest: "{{ node_config_directory }}/{{ item }}/{{ ceph_adjutant_keyring }}"
+    mode: "0660"
+  become: true
+  when: inventory_hostname in groups[item]
+  with_items:
+    - "adjutant-api"
+  notify:
+    - Restart {{ item }} container
+
+- name: Ensuring config directory has correct owner and permission
+  become: true
+  file:
+    path: "{{ node_config_directory }}/{{ item }}"
+    recurse: yes
+    owner: "{{ config_owner_user }}"
+    group: "{{ config_owner_group }}"
+  when: inventory_hostname in groups[item]
+  with_items:
+    - "adjutant-api"

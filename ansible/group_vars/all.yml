@@ -70,6 +70,16 @@ container_proxy:
 # to the api_interface.  Allow the bind address to be an override.
 api_interface_address: "{{ 'api' | kolla_address }}"
 
+###################
+# Adjutant options
+###################
+adjutant_email_host:
+adjutant_email_port:
+adjutant_email_user:
+adjutant_email_password:
+adjutant_email_tls: False
+adjutant_email_ssl: False
+
 ################
 # Chrony options
 ################
@@ -257,6 +267,11 @@ neutron_ipam_driver: "internal"
 
 # The default ports used by each service.
 # The list should be in alphabetical order
+adjutant_internal_fqdn: "{{ kolla_internal_fqdn }}"
+adjutant_external_fqdn: "{{ kolla_external_fqdn }}"
+adjutant_api_port: "5050"
+adjutant_api_listen_port: "{{ adjutant_api_port }}"
+
 aodh_internal_fqdn: "{{ kolla_internal_fqdn }}"
 aodh_external_fqdn: "{{ kolla_external_fqdn }}"
 aodh_api_port: "8042"
@@ -576,6 +591,7 @@ enable_outward_rabbitmq: "{{ enable_murano | bool }}"
 enable_haproxy_memcached: "no"
 
 # Additional optional OpenStack features and services are specified here
+enable_adjutant: "no"
 enable_aodh: "no"
 enable_barbican: "no"
 enable_blazar: "no"

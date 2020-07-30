@@ -1,0 +1,82 @@
+---
+project_name: "adjutant"
+
+adjutant_services:
+  adjutant-api:
+    container_name: adjutant_api
+    group: adjutant-api
+    enabled: true
+    image: "{{ adjutant_api_image_full }}"
+    volumes: "{{ adjutant_api_default_volumes + adjutant_api_extra_volumes }}"
+    dimensions: "{{ adjutant_api_dimensions }}"
+    haproxy:
+      adjutant_api:
+        enabled: "{{ enable_adjutant }}"
+        mode: "http"
+        external: false
+        port: "{{ adjutant_api_listen_port }}"
+      adjutant_api_external:
+        enabled: "{{ enable_adjutant }}"
+        mode: "http"
+        external: true
+        port: "{{ adjutant_api_listen_port }}"
+
+####################
+# Database
+####################
+adjutant_database_name: "adjutant"
+adjutant_database_user: "{% if use_preconfigured_databases | bool and use_common_mariadb_user | bool %}{{ database_user }}{% else %}adjutant{% endif %}"
+adjutant_database_address: "{{ database_address | put_address_in_context('url') }}:{{ database_port }}"
+
+
+####################
+# Docker
+####################
+adjutant_install_type: "{{ kolla_install_type }}"
+adjutant_tag: "{{ openstack_tag }}"
+
+adjutant_api_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ adjutant_install_type }}-adjutant-api"
+adjutant_api_tag: "{{ adjutant_tag }}"
+adjutant_api_image_full: "{{ adjutant_api_image }}:{{ adjutant_api_tag }}"
+
+adjutant_api_dimensions: "{{ default_container_dimensions }}"
+
+adjutant_api_default_volumes:
+  - "{{ node_config_directory }}/adjutant-api/:{{ container_config_directory }}/:ro"
+  - "/etc/localtime:/etc/localtime:ro"
+  - "{{ '/etc/timezone:/etc/timezone:ro' if kolla_base_distro in ['debian', 'ubuntu'] else '' }}"
+  - "kolla_logs:/var/log/kolla/"
+
+adjutant_extra_volumes: "{{ default_extra_volumes }}"
+adjutant_api_extra_volumes: "{{ adjutant_extra_volumes }}"
+
+####################
+# OpenStack
+####################
+adjutant_admin_endpoint: "{{ admin_protocol }}://{{ adjutant_internal_fqdn | put_address_in_context('url') }}:{{ adjutant_api_port }}"
+adjutant_internal_endpoint: "{{ internal_protocol }}://{{ adjutant_internal_fqdn | put_address_in_context('url') }}:{{ adjutant_api_port }}"
+adjutant_public_endpoint: "{{ public_protocol }}://{{ adjutant_external_fqdn | put_address_in_context('url') }}:{{ adjutant_api_port }}"
+
+adjutant_logging_debug: "{{ openstack_logging_debug }}"
+
+adjutant_keystone_user: "adjutant"
+
+openstack_adjutant_auth: "{{ openstack_auth }}"
+
+####################
+# Keystone
+####################
+adjutant_ks_services:
+  - name: "adjutant"
+    type: "registration"
+    description: "OpenStack Registration Service"
+    endpoints:
+      - {'interface': 'admin', 'url': '{{ adjutant_admin_endpoint }}/v1'}
+      - {'interface': 'internal', 'url': '{{ adjutant_internal_endpoint }}/v1'}
+      - {'interface': 'public', 'url': '{{ adjutant_public_endpoint }}/v1'}
+
+adjutant_ks_users:
+  - project: "service"
+    user: "{{ adjutant_keystone_user }}"
+    password: "{{ adjutant_keystone_password }}"
+    role: "admin"

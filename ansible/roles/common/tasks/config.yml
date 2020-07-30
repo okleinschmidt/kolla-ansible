@@ -170,6 +170,7 @@
          list }}
     cron_logrotate_services:
       - { name: "ansible", enabled: "yes" }
+      - { name: "adjutant", enabled: "{{ enable_adjutant | bool }}" }
       - { name: "aodh", enabled: "{{ enable_aodh | bool }}" }
       - { name: "barbican", enabled: "{{ enable_barbican | bool }}" }
       - { name: "blazar", enabled: "{{ enable_blazar | bool }}" }

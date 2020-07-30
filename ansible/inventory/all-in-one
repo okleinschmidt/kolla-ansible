@@ -233,6 +233,9 @@ control
 [blazar:children]
 control
 
+[adjutant:children]
+control
+
 # Additional control implemented here. These groups allow you to control which
 # services run on which hosts at a per-service level.
 #
@@ -752,3 +755,6 @@ ovn-database
 
 [ovn-sb-db:children]
 ovn-database
+
+[adjutant-api:children]
+adjutant
