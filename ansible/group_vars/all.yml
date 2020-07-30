@@ -1173,3 +1173,13 @@ swift_public_endpoint: "{{ public_protocol }}://{{ swift_external_fqdn | put_add
 octavia_admin_endpoint: "{{ admin_protocol }}://{{ octavia_internal_fqdn | put_address_in_context('url') }}:{{ octavia_api_port }}"
 octavia_internal_endpoint: "{{ internal_protocol }}://{{ octavia_internal_fqdn | put_address_in_context('url') }}:{{ octavia_api_port }}"
 octavia_public_endpoint: "{{ public_protocol }}://{{ octavia_external_fqdn | put_address_in_context('url') }}:{{ octavia_api_port }}"
+
+###################
+# Adjutant options
+###################
+adjutant_email_host:
+adjutant_email_port:
+adjutant_email_user:
+adjutant_email_password:
+adjutant_email_tls: False
+adjutant_email_ssl: False
