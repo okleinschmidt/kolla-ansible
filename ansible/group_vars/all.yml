@@ -253,6 +253,11 @@ neutron_ipam_driver: "internal"
 
 # The default ports used by each service.
 # The list should be in alphabetical order
+adjutant_internal_fqdn: "{{ kolla_internal_fqdn }}"
+adjutant_external_fqdn: "{{ kolla_external_fqdn }}"
+adjutant_api_port: "5050"
+adjutant_api_listen_port: "{{ adjutant_api_port }}"
+
 aodh_internal_fqdn: "{{ kolla_internal_fqdn }}"
 aodh_external_fqdn: "{{ kolla_external_fqdn }}"
 aodh_api_port: "8042"
@@ -574,6 +579,7 @@ enable_outward_rabbitmq: "{{ enable_murano | bool }}"
 enable_haproxy_memcached: "no"
 
 # Additional optional OpenStack features and services are specified here
+enable_adjutant: "no"
 enable_aodh: "no"
 enable_barbican: "no"
 enable_blazar: "no"

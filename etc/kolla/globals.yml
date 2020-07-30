@@ -266,6 +266,7 @@
 #enable_outward_rabbitmq: "{{ enable_murano | bool }}"
 
 # OpenStack services can be enabled or disabled with these options
+#enable_adjutant: "no"
 #enable_aodh: "no"
 #enable_barbican: "no"
 #enable_blazar: "no"

@@ -16,6 +16,7 @@
       group_by:
         key: "{{ item }}"
       with_items:
+        - enable_adjutant_{{ enable_adjutant | bool }}
         - enable_aodh_{{ enable_aodh | bool }}
         - enable_barbican_{{ enable_barbican | bool }}
         - enable_blazar_{{ enable_blazar | bool }}
@@ -129,6 +130,11 @@
         when: enable_haproxy | bool }
   tasks:
     - block:
+        - include_role:
+            name: adjutant
+            tasks_from: loadbalancer
+          tags: adjutant
+          when: enable_adjutant | bool      
         - include_role:
             name: aodh
             tasks_from: loadbalancer
@@ -1205,3 +1211,14 @@
     - { role: masakari,
         tags: masakari,
         when: enable_masakari | bool }
+
+- name: Apply role adjutant
+  gather_facts: false
+  hosts:
+    - adjutant-api
+    - '&enable_adjutant_True'
+  serial: '{{ kolla_serial|default("0") }}'
+  roles:
+    - { role: adjutant,
+        tags: adjutant,
+        when: enable_adjutant | bool }

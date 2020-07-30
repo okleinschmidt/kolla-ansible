@@ -102,6 +102,8 @@ cron_logrotate_rotation_count: 6
 ####################
 
 fluentd_input_openstack_services:
+  - name: adjutant
+    enabled: "{{ enable_adjutant | bool }}"
   - name: aodh
     enabled: "{{ enable_aodh | bool }}"
   - name: barbican
