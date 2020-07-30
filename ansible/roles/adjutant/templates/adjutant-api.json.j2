@@ -25,12 +25,9 @@
     ],
     "permissions": [
         {
-            "path": "/var/lib/adjutant",
-            "owner": "adjutant:adjutant"
-        },
-        {
             "path": "/var/log/kolla/adjutant",
-            "owner": "adjutant:kolla"
+            "owner": "adjutant:kolla",
+            "recurse": true
         }
     ]
 }
