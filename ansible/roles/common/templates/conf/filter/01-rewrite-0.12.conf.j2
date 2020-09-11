@@ -1,7 +1,7 @@
 <match kolla.var.log.kolla.*.*.log>
     @type rewrite_tag_filter
     capitalize_regex_backreference yes
-    rewriterule1 programname ^(cinder-api-access|cloudkitty-api-access|gnocchi-api-access|horizon-access|keystone-apache-admin-access|keystone-apache-public-access|monasca-api-access|placement-api-access|panko-api-access)$ apache_access
+    rewriterule1 programname ^(cinder-api-access|cloudkitty-api-access|gnocchi-api-access|horizon-access|keystone-apache-admin-access|keystone-apache-public-access|monasca-api-access|placement-api-access|panko-api-access|adjutant-api-access)$ apache_access
     rewriterule2 programname ^(aodh_wsgi_access|barbican-api|zun_api_wsgi_access|vitrage_wsgi_access)$ wsgi_access
     rewriterule3 programname ^(nova-api|nova-compute|nova-compute-ironic|nova-conductor|nova-manage|nova-novncproxy|nova-scheduler|nova-placement-api|placement-api|privsep-helper)$ openstack_python
     rewriterule4 programname ^(sahara-api|sahara-engine)$ openstack_python
@@ -35,7 +35,8 @@
     rewriterule32 programname ^(blazar-api|blazar-manager)$ openstack_python
     rewriterule33 programname ^(cyborg-api|cyborg-conductor|cyborg-agent)$ openstack_python
     rewriterule34 programname ^(monasca-api|monasca-notification|monasca-persister|agent-collector|agent-forwarder|agent-statsd)$ openstack_python
-    rewriterule35 programname .+ unmatched
+    rewriterule35 programname ^(adjutant-api)$ openstack_python
+    rewriterule36 programname .+ unmatched
 </match>
 
 # Retag log messages from MariaDB according to log format

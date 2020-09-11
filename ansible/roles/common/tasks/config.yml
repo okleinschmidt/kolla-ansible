@@ -279,6 +279,7 @@
   when: item.enabled | bool
   with_items:
     - { name: "ansible", enabled: "yes" }
+    - { name: "adjutant", enabled: "{{ enable_adjutant }}" }
     - { name: "aodh", enabled: "{{ enable_aodh }}" }
     - { name: "barbican", enabled: "{{ enable_barbican }}" }
     - { name: "blazar", enabled: "{{ enable_blazar }}" }
