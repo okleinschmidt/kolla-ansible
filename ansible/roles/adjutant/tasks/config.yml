@@ -1,0 +1,107 @@
+---
+- name: Ensuring config directories exist
+  file:
+    path: "{{ node_config_directory }}/{{ item.key }}"
+    state: "directory"
+    owner: "{{ config_owner_user }}"
+    group: "{{ config_owner_group }}"
+    mode: "0770"
+  become: true
+  when:
+    - inventory_hostname in groups[item.value.group]
+    - item.value.enabled | bool
+  with_dict: "{{ adjutant_services }}"
+
+- name: Check if policies shall be overwritten
+  stat:
+    path: "{{ item }}"
+  delegate_to: localhost
+  run_once: True
+  register: adjutant_policy
+  with_first_found:
+    - files: "{{ supported_policy_format_list }}"
+      paths:
+        - "{{ node_custom_config }}/adjutant/"
+      skip: true
+
+- name: Set adjutant policy file
+  set_fact:
+    adjutant_policy_file: "{{ adjutant_policy.results.0.stat.path | basename }}"
+    adjutant_policy_file_path: "{{ adjutant_policy.results.0.stat.path }}"
+  when:
+    - adjutant_policy.results
+
+- include_tasks: copy-certs.yml
+  when:
+    - kolla_copy_ca_into_containers | bool
+
+- name: Copying over config.json files for services
+  template:
+    src: "{{ item.key }}.json.j2"
+    dest: "{{ node_config_directory }}/{{ item.key }}/config.json"
+    mode: "0660"
+  become: true
+  when:
+    - item.value.enabled | bool
+    - inventory_hostname in groups[item.value.group]
+  with_dict: "{{ adjutant_services }}"
+  notify:
+    - Restart {{ item.key }} container
+
+- name: Copying over adjutant.yaml
+  vars:
+    service: "{{ adjutant_services['adjutant-api'] }}"
+  # NOTE(dszumski): We can't use merge_yaml since it replaces empty values
+  # with `null`. This breaks the thresholder config file parsing (which should
+  # probably be more robust).
+  template:
+    src: "{{ item }}"
+    dest: "{{ node_config_directory }}/adjutant-api/adjutant.yaml"
+    owner: "{{ config_owner_user }}"
+    group: "{{ config_owner_group }}"
+    mode: "0644"
+  become: true
+  with_first_found:
+    - "{{ node_custom_config }}/adjutant.yaml"
+    - "{{ node_custom_config }}/adjutant/{{ item.key }}.conf"
+    - "{{ node_custom_config }}/adjutant/{{ inventory_hostname }}/adjutant.yaml"
+    - "{{ role_path }}/templates/adjutant.yml.j2"
+  when:
+    - inventory_hostname in groups['adjutant-api']
+    - service.enabled | bool
+  notify:
+    - Restart adjutant-api container
+
+
+- name: Copying over wsgi-adjutant.conf
+  vars:
+    service: "{{ adjutant_services['adjutant-api'] }}"
+  template:
+    src: "wsgi-adjutant.conf.j2"
+    dest: "{{ node_config_directory }}/{{ item }}/wsgi-adjutant.conf"
+    mode: "0660"
+  become: true
+  when:
+    - inventory_hostname in groups['adjutant-api']
+    - service.enabled | bool
+  with_items:
+    - "adjutant-api"
+  notify:
+    - Restart adjutant-api container
+
+- name: Copying over existing policy file
+  template:
+    src: "{{ adjutant_policy_file_path }}"
+    dest: "{{ node_config_directory }}/{{ item.key }}/{{ adjutant_policy_file }}"
+    mode: "0660"
+  become: true
+  when:
+    - adjutant_policy_file is defined
+    - inventory_hostname in groups[item.value.group]
+    - item.value.enabled | bool
+  with_dict: "{{ adjutant_services }}"
+  notify:
+    - Restart {{ item.key }} container
+
+- include_tasks: check-containers.yml
+  when: kolla_action != "config"

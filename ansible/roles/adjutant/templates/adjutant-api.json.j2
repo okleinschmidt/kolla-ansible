@@ -1,0 +1,33 @@
+{% set adjutant_cmd = 'apache2' if kolla_base_distro in ['ubuntu', 'debian'] else 'httpd' %}
+{% set adjutant_dir = 'apache2/conf-enabled' if kolla_base_distro in ['ubuntu', 'debian'] else 'httpd/conf.d' %}
+{
+    "command": "{{ adjutant_cmd }} -DFOREGROUND",
+    "config_files": [
+        {
+            "source": "{{ container_config_directory }}/adjutant.yaml",
+            "dest": "/etc/adjutant/adjutant.yaml",
+            "owner": "adjutant",
+            "perm": "0644"
+        },
+        {
+            "source": "{{ container_config_directory }}/wsgi-adjutant.conf",
+            "dest": "/etc/{{ adjutant_dir }}/wsgi-adjutant.conf",
+            "owner": "adjutant",
+            "perm": "0600"
+        }{% if adjutant_policy_file is defined %},
+        {
+            "source": "{{ container_config_directory }}/{{ adjutant_policy_file }}",
+            "dest": "/etc/adjutant/{{ adjutant_policy_file }}",
+            "owner": "adjutant",
+            "perm": "0600"
+        }{% endif %}
+
+    ],
+    "permissions": [
+        {
+            "path": "/var/log/kolla/adjutant",
+            "owner": "adjutant:kolla",
+            "recurse": true
+        }
+    ]
+}
