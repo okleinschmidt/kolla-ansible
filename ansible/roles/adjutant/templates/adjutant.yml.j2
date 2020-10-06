@@ -31,7 +31,7 @@ django:
   # The name and location of the Adjutant log file, superceded by 'adjutant.django.logging'.
   log_file: /var/log/kolla/adjutant/adjutant-api.log
   email:
-    {% if enable_adjutant_email | bool %}
+{% if enable_adjutant_email | bool %}
     email_backend: django.core.mail.backends.smtp.EmailBackend
     host: {{ adjutant_email_host }}
     port: {{ adjutant_email_port }}
@@ -39,7 +39,7 @@ django:
     host_password: {{ adjutant_email_password }}
     use_tls: {{ adjutant_email_tls }}
     use_ssl: {{ adjutant_email_ssl }}
-    {% else %}
+{% else %}
     # String
     # Django email backend to use.
     email_backend: django.core.mail.backends.console.EmailBackend
@@ -64,7 +64,7 @@ django:
     # Boolean
     # Whether to use SSL for email. Mutually exclusive with 'use_tls'.
     use_ssl: False
-    {% endif %}
+{% endif %}
 
 identity:
   # Integer
