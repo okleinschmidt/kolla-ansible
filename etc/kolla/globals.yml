@@ -233,6 +233,7 @@
 #enable_outward_rabbitmq: "{{ enable_murano | bool }}"
 
 # OpenStack services can be enabled or disabled with these options
+#enable_adjutant: "no"
 #enable_aodh: "no"
 #enable_barbican: "no"
 #enable_blazar: "no"
@@ -361,6 +362,18 @@
 #enable_watcher: "no"
 #enable_zookeeper: "{{ enable_kafka | bool or enable_storm | bool }}"
 #enable_zun: "no"
+
+###################
+# Adjutant options
+###################
+enable_adjutant_email: "no"
+# adjutant_email_backend: "django.core.mail.backends.smtp.EmailBackend"
+adjutant_email_host:
+adjutant_email_port:
+adjutant_email_user:
+adjutant_email_password:
+adjutant_email_tls: False
+adjutant_email_ssl: False
 
 ##################
 # RabbitMQ options
