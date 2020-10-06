@@ -70,16 +70,6 @@ container_proxy:
 # to the api_interface.  Allow the bind address to be an override.
 api_interface_address: "{{ 'api' | kolla_address }}"
 
-###################
-# Adjutant options
-###################
-adjutant_email_host:
-adjutant_email_port:
-adjutant_email_user:
-adjutant_email_password:
-adjutant_email_tls: False
-adjutant_email_ssl: False
-
 ################
 # Chrony options
 ################
@@ -1157,6 +1147,18 @@ distro_python_version: "{{ distro_python_version_map[kolla_base_distro] }}"
 # Configure telegraf to use the docker daemon itself as an input for
 # telemetry data.
 telegraf_enable_docker_input: "no"
+
+###################
+# Adjutant options
+###################
+enable_adjutant_email: "no"
+adjutant_email_backend: "django.core.mail.backends.smtp.EmailBackend"
+adjutant_email_host:
+adjutant_email_port:
+adjutant_email_user:
+adjutant_email_password:
+adjutant_email_tls: False
+adjutant_email_ssl: False
 
 vitrage_admin_endpoint: "{{ admin_protocol }}://{{ kolla_internal_fqdn | put_address_in_context('url') }}:{{ vitrage_api_port }}"
 vitrage_internal_endpoint: "{{ internal_protocol }}://{{ kolla_internal_fqdn | put_address_in_context('url') }}:{{ vitrage_api_port }}"
