@@ -21,6 +21,10 @@ adjutant_services:
         external: true
         port: "{{ adjutant_api_listen_port }}"
 
+adjutant_required_roles:
+  - project_mod
+  - project_admin
+
 ####################
 # Database
 ####################
