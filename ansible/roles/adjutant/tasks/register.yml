@@ -6,3 +6,16 @@
     service_ks_register_services: "{{ adjutant_ks_services }}"
     service_ks_register_users: "{{ adjutant_ks_users }}"
   tags: always
+
+- name: Adding adjutant related roles
+  become: true
+  kolla_toolbox:
+    module_name: "os_keystone_role"
+    module_args:
+      name: "{{ item }}"
+      auth: "{{ openstack_adjutant_auth }}"
+      endpoint_type: "{{ openstack_interface }}"
+      cacert: "{{ openstack_cacert }}"
+      region_name: "{{ openstack_region_name }}"
+  run_once: True
+  with_items: "{{ adjutant_required_roles }}"
