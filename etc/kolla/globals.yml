@@ -684,6 +684,9 @@ adjutant_email_ssl: False
 #  - host1:port1
 #  - host2:port2
 
+# Whether to keep using Prometheus server v1 (due to no data-preserving migration path to v2)
+#prometheus_use_v1: no
+
 #########
 # Freezer
 #########
