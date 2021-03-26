@@ -767,7 +767,7 @@ adjutant_email_ssl: False
 #    enable_dhcp: yes
 
 # Octavia management network subnet CIDR.
-#octavia_amp_network_cidr: 10.0.0.0/24
+#octavia_amp_network_cidr: 10.1.0.0/24
 
 #octavia_amp_image_tag: "amphora"
 
